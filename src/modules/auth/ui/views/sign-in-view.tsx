@@ -2,11 +2,15 @@
 
 
 import { z } from "zod";
+import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { OctagonAlertIcon } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 
+
+
 import { Input } from "@/components/ui/input";
+import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card"
 import { Alert, AlertTitle } from "@/components/ui/alert"
@@ -89,7 +93,7 @@ export const SignInView = () => {
                   /> 
                 </div>
                 {true && (
-                  <Alert className="bg-destructive/10 birder-none">
+                  <Alert className="bg-destructive/10 border-none">
                     <OctagonAlertIcon className="h-4 w-4 !text-destructive" />
                     <AlertTitle className="text-destructive">
                       There was a problem with your login.
@@ -120,6 +124,12 @@ export const SignInView = () => {
                       Github
                   </Button>
                 </div>
+                <div className="text-center text-sm">
+                  Don&apos;t have an account?{" "}
+                  <Link href = "/sign-up" className="underline underline-offset-4">
+                  Sign Up
+                  </Link>
+                </div>
         
               </div>
             </form>
@@ -132,6 +142,12 @@ export const SignInView = () => {
           </div> 
         </CardContent>
       </Card>
+
+      <div className="text-center text-sm text-muted-foreground">
+        © 2026 Meet.AI. All rights reserved.
+      </div>
+
+
     </div>
   )
 } 
