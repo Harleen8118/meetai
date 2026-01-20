@@ -6,6 +6,8 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { OctagonAlertIcon } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 
 
@@ -22,6 +24,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { auth } from "@/lib/auth";
+
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -29,6 +33,12 @@ const formSchema = z.object({
 });
 
 export const SignInView = () => {
+
+  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+  const [pending, setPending] = useState(false);
+
+  
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -37,6 +47,28 @@ export const SignInView = () => {
     },
   });
 
+  const onSubmit = (data: z.infer<typeof formSchema>) => {
+    setError(null);
+    setPending(true);
+
+    authClient.signIn.email(
+      {
+        email: data.email,
+        password: data.password,
+      },
+      {
+        onSuccess: () => {
+          setPending(false);
+          router.push("/");
+        },
+        onError: ({ error }) => {
+          setError(error.message);
+        },
+      }
+    );
+  };
+    
+
   return (
     <div className = "flex flex-col gap-6">
 
@@ -44,13 +76,14 @@ export const SignInView = () => {
       <Card className = "overflow-hidden p-0">
         <CardContent className = "grid p-0 md:grid-cols-2">
           <Form {...form}>
-            <form className="p-6 md:p-8"> 
+            <form onSubmit = {form.handleSubmit(onSubmit)} className="p-6 md:p-8"> 
+              
               <div className = "flex flex-col gap-6">
                 <div className = "flex flex-col items-center text-center">
                   <h1 className = "text-2xl font-bold">
                     Welcome back
                   </h1>
-                  <p className = "text-muted-foregroundtext-balance">
+                  <p className = "text-muted-foreground text-balanced">
                     Login to your account
                   </p>
                 </div>
@@ -92,15 +125,14 @@ export const SignInView = () => {
                     )}
                   /> 
                 </div>
-                {true && (
+                {!!error && (
                   <Alert className="bg-destructive/10 border-none">
                     <OctagonAlertIcon className="h-4 w-4 !text-destructive" />
-                    <AlertTitle className="text-destructive">
-                      There was a problem with your login.
-                    </AlertTitle> 
+                    <AlertTitle>{error}</AlertTitle> 
                   </Alert>
                 )}
                 <Button 
+                disabled = {pending}
                 type="submit" 
                 className = "w-full">
                   Sign In
@@ -112,12 +144,14 @@ export const SignInView = () => {
                 </div>
                 <div className = "grid grid-cols-2 gap-4">
                   <Button 
+                    disabled = {pending}
                     variant = "outline"
                     type = "button"
                     className="w-full">
                       Google
                   </Button>
                   <Button 
+                    disabled = {pending}
                     variant = "outline"
                     type = "button"
                     className="w-full">
