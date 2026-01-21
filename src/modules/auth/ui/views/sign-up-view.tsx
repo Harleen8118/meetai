@@ -227,8 +227,6 @@ export const SignUpView = () => {
       <div className="text-center text-sm text-muted-foreground">
         © 2026 Meet.AI. All rights reserved.
       </div>
-
-
     </div>
   )
 } 
