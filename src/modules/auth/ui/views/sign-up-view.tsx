@@ -76,6 +76,26 @@ export const SignUpView = () => {
     );
   };
     
+  const onSocial = (provider: "github" | "google") => {
+    setError(null);
+    setPending(true);
+
+    authClient.signIn.social(
+      {
+        provider: provider
+      },
+      {
+        onSuccess: () => {
+          setPending(false);
+          router.push("/");
+        },
+        onError: ({ error }) => {
+          setError(error.message);
+        },
+      }
+    );
+  };
+    
 
   return (
     <div className = "flex flex-col gap-6">
@@ -192,6 +212,7 @@ export const SignUpView = () => {
                 <div className = "grid grid-cols-2 gap-4">
                   <Button 
                     disabled = {pending}
+                    onClick={() => onSocial("google")}
                     variant = "outline"
                     type = "button"
                     className="w-full">
@@ -199,6 +220,7 @@ export const SignUpView = () => {
                   </Button>
                   <Button 
                     disabled = {pending}
+                    onClick={() => onSocial("github")}
                     variant = "outline"
                     type = "button"
                     className="w-full">
